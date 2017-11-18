@@ -216,7 +216,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/colorBody"
+            android:background="@color/colorPrimary"
             android:layout_weight="0.18"
             android:padding="10dp">
 
