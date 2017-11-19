@@ -23,7 +23,7 @@ public class CreateFile {
         File sdCard = Environment.getExternalStorageDirectory();
 
         //Folder Path
-        String imageStorageFolder = File.separator + "DCIM" + File.separator + "Camera" + File.separator;
+        String imageStorageFolder = File.separator + "DCIM" + File.separator + "Furniture" + File.separator;
 
         //File Path
         path = sdCard + imageStorageFolder + filename + fileNameExtension;
