@@ -3,6 +3,7 @@ package com.system.optimize.furnitureinfo;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -21,7 +22,9 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.List;
 
@@ -104,10 +107,16 @@ public class MainActivity extends Activity {
         if (requestCode == headerImage && resultCode == RESULT_OK) {
             try {
                 Bitmap bitmap = BitmapManager.decode(file.getAbsolutePath(), 200, 100);
-                mainPic.setImageBitmap(bitmap);
+                Picasso.with(MainActivity.this).load(getImageUri(MainActivity.this,bitmap)).into(mainPic);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 }
