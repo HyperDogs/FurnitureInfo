@@ -2,10 +2,10 @@ package com.system.optimize.furnitureinfo;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -41,6 +41,7 @@ public class MainActivity extends Activity {
     ImageView mainPic;
     int headerImage = 1001;
     File file;
+    Uri uri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +59,6 @@ public class MainActivity extends Activity {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 List<PermissionGrantedResponse> permissionGrantedResponses = report.getGrantedPermissionResponses();
-                List<PermissionDeniedResponse> permissionDeniedResponses = report.getDeniedPermissionResponses();
 
                 for(PermissionGrantedResponse grantedResponse : permissionGrantedResponses)
                 {
@@ -89,13 +89,13 @@ public class MainActivity extends Activity {
     private View.OnClickListener onClickTakePic = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            CreateFile createFile = new CreateFile();
+            if (mainPic.getDrawable()== null){
+                Toast.makeText(MainActivity.this,"Blank",Toast.LENGTH_LONG).show();
+            }
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            file = createFile.createUnique();
-            Uri photoURI = FileProvider.getUriForFile(MainActivity.this,
-                    BuildConfig.APPLICATION_ID + ".provider",
-                    file);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            file = CreateFile.createUnique();
+            uri = FileProvider.getUriForFile(MainActivity.this,BuildConfig.APPLICATION_ID + ".provider",file);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             startActivityForResult(intent, headerImage);
 
         }
@@ -106,8 +106,8 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == headerImage && resultCode == RESULT_OK) {
             try {
-                Bitmap bitmap = BitmapManager.decode(file.getAbsolutePath(), 200, 100);
-                Picasso.with(MainActivity.this).load(getImageUri(MainActivity.this,bitmap)).into(mainPic);
+                Bitmap bitmap  = BitmapFactory.decodeFile(file.getPath());
+                Picasso.with(MainActivity.this).load(getImageUri(MainActivity.this,bitmap)).fit().centerCrop().into(mainPic);
             } catch (Exception e) {
                 e.printStackTrace();
             }
